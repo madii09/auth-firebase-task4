@@ -1,4 +1,3 @@
-// src/components/AuthForm.js
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -18,14 +17,12 @@ const AuthForm = ({ isSignUp }) => {
     e.preventDefault();
     try {
       if (isSignUp) {
-        // Create user account with Firebase Authentication
         const userCredential = await createUserWithEmailAndPassword(
           auth,
           email,
           password
         );
         const user = userCredential.user;
-        // Save user data in Firestore
         await setDoc(doc(firestore, 'users', user.uid), {
           uid: user.uid,
           email: user.email,

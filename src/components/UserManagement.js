@@ -1,4 +1,3 @@
-// src/components/UserManagement.js
 import { signOut } from 'firebase/auth';
 import { collection, getDocs } from 'firebase/firestore';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -181,7 +180,6 @@ const UserManagement = ({ user }) => {
                     type='checkbox'
                     checked={user.selected}
                     onChange={() => selectUsers(user.uid)}
-                    // disabled={user.uid === currentUser.uid}
                   />
                 </td>
                 <td>{user.uid}</td>
