@@ -1,4 +1,4 @@
-import { signOut } from 'firebase/auth';
+// import { signOut } from 'firebase/auth';
 import { collection, getDocs } from 'firebase/firestore';
 import React, { useEffect, useMemo, useState } from 'react';
 import { doc, deleteDoc, updateDoc } from 'firebase/firestore';
@@ -7,7 +7,6 @@ import { auth, firestore } from '../firebaseConfig';
 
 const UserManagement = ({ user }) => {
   const [users, setUsers] = useState([]);
-
   const selectedUsers = useMemo(
     () => users.filter((user) => user.selected),
     [users]
@@ -75,12 +74,16 @@ const UserManagement = ({ user }) => {
           status: 'blocked',
         });
         console.log(`User ${user.uid} has been blocked.`);
+
+        if (user.uid === auth.currentUser.uid) {
+          await auth.signOut();
+          window.location.href = '/login';
+        }
       } catch (error) {
         console.error('Error blocking user:', error);
       }
     });
 
-    // Wait for all block operations to finish
     await Promise.all(promises);
 
     // Update state to reflect blocked status in the UI
@@ -120,7 +123,8 @@ const UserManagement = ({ user }) => {
   };
 
   const handleLogout = () => {
-    signOut(auth);
+    auth.signOut();
+    window.location.href = '/login';
   };
 
   useEffect(() => {

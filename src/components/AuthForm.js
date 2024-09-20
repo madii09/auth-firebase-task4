@@ -6,6 +6,7 @@ import { doc, setDoc } from 'firebase/firestore';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { auth, firestore } from '../firebaseConfig';
+import { isUserBlocked } from '../utils';
 
 const AuthForm = ({ isSignUp }) => {
   const [email, setEmail] = useState('');
@@ -36,8 +37,14 @@ const AuthForm = ({ isSignUp }) => {
         navigate('/users'); // Redirect to users management after successful sign-up
       } else {
         // Log in the user with Firebase Authentication
-        await signInWithEmailAndPassword(auth, email, password);
-        navigate('/users'); // Redirect to users management after successful login
+        const { user } = await signInWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+        if (await isUserBlocked(user.uid)) {
+          alert('User is blocked!');
+        }
       }
     } catch (err) {
       setError(err.message);

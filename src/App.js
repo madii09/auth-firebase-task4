@@ -1,21 +1,32 @@
 // src/App.js
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
+  Navigate,
+  Route,
   BrowserRouter as Router,
   Routes,
-  Route,
-  Navigate,
 } from 'react-router-dom';
-import { auth } from './firebaseConfig';
 import AuthForm from './components/AuthForm';
 import UserManagement from './components/UserManagement';
+import { auth } from './firebaseConfig';
+import { isUserBlocked } from './utils';
 
 const App = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
-      setUser(currentUser);
+    async function checkUser(uid) {
+      return await isUserBlocked(uid);
+    }
+
+    const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
+      if (currentUser) {
+        checkUser(currentUser.uid).then((res) => {
+          if (!res) {
+            setUser(currentUser);
+          }
+        });
+      }
     });
     return () => unsubscribe();
   }, []);
